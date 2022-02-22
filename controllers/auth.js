@@ -22,7 +22,13 @@ exports.login = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    //compare password
+    throw new UnauthenticatedError('Invalid Credentials');
+  }
+
+  //compare password
+  const isPasswordCorrect = await user.matchPassword(password);
+
+  if (!isPasswordCorrect) {
     throw new UnauthenticatedError('Invalid Credentials');
   }
 

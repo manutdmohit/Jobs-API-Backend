@@ -45,4 +45,10 @@ UserSchema.methods.generateToken = function () {
   );
 };
 
+UserSchema.methods.matchPassword = function (enteredPassword) {
+  const isMatched = bcrypt.compare(enteredPassword, this.password);
+
+  return isMatched;
+};
+
 module.exports = mongoose.model('User', UserSchema);
