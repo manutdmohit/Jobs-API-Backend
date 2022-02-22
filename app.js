@@ -3,6 +3,8 @@ require('express-async-errors');
 const express = require('express');
 const app = express();
 
+// connectDB
+
 // error handler
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
@@ -10,10 +12,10 @@ const errorHandlerMiddleware = require('./middleware/error-handler');
 app.use(express.json());
 // extra packages
 
-// routes
-app.get('/', (req, res) => {
-  res.send('jobs api');
-});
+// mount router
+app.use('/api/v1/auth', require('./routes/auth'));
+
+app.use('/api/v1/jobs', require('./routes/jobs'));
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
