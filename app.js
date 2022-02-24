@@ -2,10 +2,12 @@ require('dotenv').config();
 require('express-async-errors');
 
 // extra security packages
+const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const cors = require('cors');
 const xss = require('xss-clean');
 const rateLimiter = require('express-rate-limit');
+const hpp = require('hpp');
 
 const express = require('express');
 const app = express();
@@ -19,6 +21,7 @@ const authenticateUser = require('./middleware/authentication');
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
+// Rate Limiting
 app.set('trustproxy', 1);
 app.use(
   rateLimiter({
@@ -26,9 +29,21 @@ app.use(
     max: 100, // limit each IP to 100 requests per windows
   })
 );
+
+// Body Parser
 app.use(express.json());
+
+// Sanitize Data : No SQL Injection
+app.use(mongoSanitize());
+
+// Set security headers
 app.use(helmet());
+
+// Prevent http param pollution
+
 app.use(cors());
+
+// Prevent XSS attacks : <script></script>
 app.use(xss());
 
 // mount routers
